@@ -1,0 +1,17 @@
+{
+  "name": "HexTravel Log",
+  "short_name": "HexTravel",
+  "description": "Mark your visited places on a hexagonal world map.",
+  "start_url": "index.php",
+  "display": "standalone",
+  "background_color": "#10b981",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
