@@ -1,9 +1,10 @@
-const CACHE_NAME = 'hextravel-v2';
+const CACHE_NAME = 'hextravel-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.php',
   './style.css',
   './manifest.json',
+  './icon-192.png',
   './icon-512.png',
   './js/config.js',
   './js/state.js',
@@ -58,11 +59,23 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Handle other requests (Network First, fallback to cache)
+  // Handle API GET requests (Network First, caching the success response for offline fallback)
   if (url.pathname.includes('api.php')) {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
-    );
+    if (event.request.method === 'GET') {
+      event.respondWith(
+        fetch(event.request)
+          .then((networkResponse) => {
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            });
+          })
+          .catch(() => caches.match(event.request))
+      );
+    } else {
+      // POST, DELETE, etc. should not be cached (will fail naturally if offline)
+      event.respondWith(fetch(event.request));
+    }
     return;
   }
 
