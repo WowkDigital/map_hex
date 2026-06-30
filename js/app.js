@@ -37,6 +37,22 @@ const debouncedUpdateGrid = debounce(updateGrid, 250);
 // --- API Wrapper Functions in App context ---
 
 async function loadUsers() {
+    if (window.GUEST_MODE) {
+        ELEMENTS.userSelect.innerHTML = '';
+        const opt = document.createElement('option');
+        opt.value = 'guest';
+        opt.innerText = 'Tryb gościa';
+        opt.disabled = true;
+        opt.selected = true;
+        ELEMENTS.userSelect.appendChild(opt);
+        ELEMENTS.userSelect.disabled = true;
+        ELEMENTS.addUserBtn.style.display = 'none';
+
+        state.currentUser = { id: 'guest', username: 'Gość' };
+        await loadVisitedHexes();
+        return;
+    }
+
     try {
         const users = await api.fetchUsers();
         
@@ -93,6 +109,10 @@ async function loadVisitedHexes() {
     state.visitedLayer.clearLayers();
     updateStats();
 
+    if (window.GUEST_MODE) {
+        return;
+    }
+
     try {
         const data = await api.fetchVisitedHexes(state.currentUser.id);
         
@@ -109,6 +129,13 @@ async function loadVisitedHexes() {
 async function saveHexAction(h3Index, res, level) {
     if (!state.currentUser) return;
 
+    if (window.GUEST_MODE) {
+        const fakeTimestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        drawHex(h3Index, level, fakeTimestamp);
+        showToast("Marked location (Guest)!");
+        return;
+    }
+
     try {
         const result = await api.saveHex(state.currentUser.id, h3Index, res, level);
         if (result.success) {
@@ -124,6 +151,11 @@ async function saveHexAction(h3Index, res, level) {
 
 async function deleteHexAction(h3Index) {
     if (!state.currentUser) return;
+
+    if (window.GUEST_MODE) {
+        showToast("Removed location (Guest).");
+        return;
+    }
 
     try {
         const result = await api.deleteHex(state.currentUser.id, h3Index);

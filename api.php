@@ -13,6 +13,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     sendError('Unauthorized', 401);
 }
 
+if (isset($_SESSION['guest_mode']) && $_SESSION['guest_mode'] === true) {
+    sendError('Forbidden', 403);
+}
+
 try {
     // Include modules
     require_once __DIR__ . '/includes/db.php';

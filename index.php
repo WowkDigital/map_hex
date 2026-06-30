@@ -16,6 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_action'])) {
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_action'])) {
+    $_SESSION['logged_in'] = true;
+    $_SESSION['guest_mode'] = true;
+    $_SESSION['username'] = 'Gość';
+    header('Location: ./');
+    exit;
+}
+
 if (isset($_GET['logout'])) {
     session_destroy();
     header('Location: ./');
@@ -60,6 +68,10 @@ if (!$isLoggedIn):
                 <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
             </div>
             <button type="submit" class="login-btn">Zaloguj się</button>
+        </form>
+        <form method="POST" action="" style="margin-top: 10px;">
+            <input type="hidden" name="guest_action" value="1">
+            <button type="submit" class="guest-btn">Wejdź jako gość</button>
         </form>
     </div>
 </body>
@@ -203,6 +215,9 @@ if (!$isLoggedIn):
     <!-- H3-JS -->
     <script src="https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js"></script>
 
+    <script>
+        window.GUEST_MODE = <?php echo (isset($_SESSION['guest_mode']) && $_SESSION['guest_mode'] === true) ? 'true' : 'false'; ?>;
+    </script>
     <!-- App Entry Point -->
     <script type="module" src="js/app.js"></script>
 </body>
