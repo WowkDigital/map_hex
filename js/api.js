@@ -1,7 +1,15 @@
 // API Service Layer (Pure fetch requests)
 
+function checkAuth(response) {
+    if (response.status === 401) {
+        window.location.href = 'index.php?logout=1';
+        throw new Error("Unauthorized");
+    }
+}
+
 export async function fetchUsers() {
     const response = await fetch('api.php?action=users');
+    checkAuth(response);
     if (!response.ok) {
         throw new Error("Failed to load users");
     }
@@ -16,6 +24,7 @@ export async function createUser(username) {
         },
         body: JSON.stringify({ username })
     });
+    checkAuth(response);
     if (!response.ok) {
         const err = await response.json().catch(() => ({}));
         throw new Error(err.error || "Failed to create user");
@@ -25,6 +34,7 @@ export async function createUser(username) {
 
 export async function fetchVisitedHexes(userId) {
     const response = await fetch(`api.php?user_id=${userId}`);
+    checkAuth(response);
     if (!response.ok) {
         throw new Error('Failed to load visited hexes');
     }
@@ -44,6 +54,7 @@ export async function saveHex(userId, h3Index, res, level) {
             user_id: userId
         })
     });
+    checkAuth(response);
     if (!response.ok) {
         throw new Error('Save failed');
     }
@@ -61,6 +72,7 @@ export async function deleteHex(userId, h3Index) {
             user_id: userId
         })
     });
+    checkAuth(response);
     if (!response.ok) {
         throw new Error('Delete failed');
     }

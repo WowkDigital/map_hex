@@ -1,4 +1,5 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 
 // Helper to send error
@@ -6,6 +7,10 @@ function sendError($msg, $code = 400) {
     http_response_code($code);
     echo json_encode(['error' => $msg]);
     exit;
+}
+
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    sendError('Unauthorized', 401);
 }
 
 try {

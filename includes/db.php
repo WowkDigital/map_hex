@@ -5,6 +5,9 @@ function initDatabase($dbPath = 'database.db') {
     // Connect to SQLite database
     $db = new PDO("sqlite:$dbPath");
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // Set busy timeout to 5 seconds to prevent locking errors under concurrency
+    $db->exec("PRAGMA busy_timeout = 5000;");
 
     // --- MIGRATION & SCHEMA INITIALIZATION LOGIC ---
 
@@ -17,7 +20,11 @@ function initDatabase($dbPath = 'database.db') {
 
     // Ensure Default User exists if table was just created or empty
     $stmt = $db->query("SELECT COUNT(*) FROM users");
-    if ($stmt->fetchColumn() == 0) {
+    $userCount = $stmt->fetchColumn();
+    $stmt->closeCursor();
+    $stmt = null;
+
+    if ($userCount == 0) {
         $db->exec("INSERT INTO users (username) VALUES ('Default User')");
     }
 
@@ -27,6 +34,9 @@ function initDatabase($dbPath = 'database.db') {
     try {
         $result = $db->query("PRAGMA table_info(visited_hexes)");
         $columns = $result->fetchAll(PDO::FETCH_COLUMN, 1);
+        $result->closeCursor();
+        $result = null;
+
         if (!empty($columns) && !in_array('user_id', $columns)) {
             $needsMigration = true;
         }
@@ -38,7 +48,10 @@ function initDatabase($dbPath = 'database.db') {
         $db->beginTransaction();
         try {
             // Get ID of default user
-            $defaultUserId = $db->query("SELECT id FROM users ORDER BY id ASC LIMIT 1")->fetchColumn();
+            $userStmt = $db->query("SELECT id FROM users ORDER BY id ASC LIMIT 1");
+            $defaultUserId = $userStmt->fetchColumn();
+            $userStmt->closeCursor();
+            $userStmt = null;
 
             // Rename old table
             $db->exec("ALTER TABLE visited_hexes RENAME TO visited_hexes_old");
