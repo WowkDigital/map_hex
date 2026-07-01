@@ -2,7 +2,7 @@
 export const state = {
     visited: new Map(), // Raw data: H3 index -> {level, added_at}
     gridLayer: L.layerGroup(),
-    visitedLayer: L.layerGroup(),
+    visitedLayer: L.featureGroup(),
     isPainting: false,
     paintMode: false,
     eraserMode: false,

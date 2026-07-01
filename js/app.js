@@ -315,6 +315,11 @@ map.on('click', function(e) {
     handleHexAction(e.latlng.lat, e.latlng.lng);
 });
 
+state.visitedLayer.on('click', function(e) {
+    if (state.paintMode) return;
+    handleHexAction(e.latlng.lat, e.latlng.lng);
+});
+
 map.on('mousedown', function(e) {
     if (state.paintMode) {
         if (e.originalEvent.button === 0) { // Left click
