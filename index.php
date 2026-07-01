@@ -12,14 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_action'])) {
         header('Location: ./');
         exit;
     } else {
-        $error = 'Błędny użytkownik lub hasło.';
+        $error = 'Invalid username or password.';
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_action'])) {
     $_SESSION['logged_in'] = true;
     $_SESSION['guest_mode'] = true;
-    $_SESSION['username'] = 'Gość';
+    $_SESSION['username'] = 'Guest';
     header('Location: ./');
     exit;
 }
@@ -35,11 +35,11 @@ $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 if (!$isLoggedIn):
 ?>
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Logowanie - HexTravel Log</title>
+    <title>Login - HexTravel Log</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#10b981">
@@ -51,7 +51,7 @@ if (!$isLoggedIn):
             <div class="brand-icon">H</div>
             <h1>HexTravel Log</h1>
         </div>
-        <p class="description">Zaloguj się, aby uzyskać dostęp do mapy podróży.</p>
+        <p class="description">Log in to access the travel map.</p>
         
         <?php if (!empty($error)): ?>
             <div class="login-error"><?php echo htmlspecialchars($error); ?></div>
@@ -60,18 +60,18 @@ if (!$isLoggedIn):
         <form method="POST" action="">
             <input type="hidden" name="login_action" value="1">
             <div class="input-group">
-                <label class="control-label" for="username">Użytkownik</label>
+                <label class="control-label" for="username">Username</label>
                 <input type="text" id="username" name="username" required autocomplete="username" placeholder="kw314">
             </div>
             <div class="input-group">
-                <label class="control-label" for="password">Hasło</label>
+                <label class="control-label" for="password">Password</label>
                 <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
             </div>
-            <button type="submit" class="login-btn">Zaloguj się</button>
+            <button type="submit" class="login-btn">Log In</button>
         </form>
         <form method="POST" action="" style="margin-top: 10px;">
             <input type="hidden" name="guest_action" value="1">
-            <button type="submit" class="guest-btn">Wejdź jako gość</button>
+            <button type="submit" class="guest-btn">Enter as Guest</button>
         </form>
     </div>
 </body>
@@ -126,7 +126,7 @@ if (!$isLoggedIn):
                 <option value="" disabled selected>Loading users...</option>
             </select>
             <button id="add-user-btn" class="add-user-btn" title="Add New User">+</button>
-            <a href="?logout=1" class="logout-btn" title="Wyloguj">
+            <a href="?logout=1" class="logout-btn" title="Log Out">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             </a>
         </div>

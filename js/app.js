@@ -41,14 +41,14 @@ async function loadUsers() {
         ELEMENTS.userSelect.innerHTML = '';
         const opt = document.createElement('option');
         opt.value = 'guest';
-        opt.innerText = 'Tryb gościa';
+        opt.innerText = 'Guest mode';
         opt.disabled = true;
         opt.selected = true;
         ELEMENTS.userSelect.appendChild(opt);
         ELEMENTS.userSelect.disabled = true;
         ELEMENTS.addUserBtn.style.display = 'none';
 
-        state.currentUser = { id: 'guest', username: 'Gość' };
+        state.currentUser = { id: 'guest', username: 'Guest' };
         await loadVisitedHexes();
         return;
     }

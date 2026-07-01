@@ -1,75 +1,75 @@
-# Plan rozwoju i pomysły na rozbudowę HexTravel Log 🗺️⬡
+# Roadmap and Development Ideas for HexTravel Log 🗺️⬡
 
-HexTravel Log to świetny fundament pod rozbudowaną aplikację turystyczną. Heksy Uber H3 dają ogromne możliwości analityczne i wizualne. Poniżej znajduje się lista propozycji ulepszeń podzielona na kategorie, które mogą przekształcić ten projekt w pełnoprawną platformę podróżniczą.
-
----
-
-## 1. Użyteczność i UX (User Experience)
-
-### 📍 Lokalizacja GPS i Wyszukiwarka Miejsc
-* **Przycisk "Moja lokalizacja":** Wykorzystanie systemowego API Geolocation w przeglądarce do natychmiastowego wycentrowania mapy na pozycji użytkownika i opcjonalnie zaznaczenia aktualnego heksa.
-* **Geokoder (Wyszukiwarka):** Integracja z darmowym API (np. Nominatim/OpenStreetMap) umożliwiającym wyszukanie miasta lub kraju i szybkie przeniesienie tam widoku.
-
-### 👥 Rozbudowane Profile Użytkowników
-* **Zarządzanie profilami:** Dodanie opcji edycji nazwy użytkownika oraz usuwania profilu bezpośrednio z poziomu interfejsu (UI).
-* **Indywidualna kolorystyka:** Możliwość przypisania unikalnego koloru dla każdego użytkownika (zamiast sztywnego koloru szmaragdowego), co pozwoli na nakładanie map kilku osób i porównywanie ich (np. "Gdzie byliśmy razem?").
-
-### ✍️ Interaktywne Wspomnienia (Notatki i Zdjęcia)
-* **Szczegóły heksa:** Kliknięcie w odwiedzony heks otwiera wyskakujące okienko (popup/modal), w którym użytkownik może:
-  * Dodać precyzyjną datę wizyty (lub zakres dat).
-  * Wpisać krótką notatkę/dziennik z podróży.
-  * Dodać zdjęcia (zapisywane na serwerze lub jako linki).
-* **Galeria podróży:** Widok podsumowujący wszystkie dodane zdjęcia z mapy w formie ładnej siatki.
-
-### 📥 Import / Eksport Danych (Ślady GPS)
-* **Import plików GPX / GeoJSON:** Najlepsza funkcja dla aktywnych podróżników. Użytkownik wgrywa plik `.gpx` ze swojego zegarka (Garmin, Strava) lub telefonu, a aplikacja automatycznie oblicza, które heksy przecinała trasa i oznacza je jako odwiedzone.
-* **Kopia zapasowa (Backup):** Eksport wszystkich danych użytkownika do pliku JSON/CSV i łatwy import na innym urządzeniu.
+HexTravel Log serves as a great foundation for an extended travel application. Uber's H3 hexes provide vast analytical and visual opportunities. Below is a list of proposed enhancements categorized by area, which can transform this project into a fully-fledged travel platform.
 
 ---
 
-## 2. H3 & Map Engine (Wizualizacja i Optymalizacje)
+## 1. Usability and UX (User Experience)
 
-### 📈 Statystyki i Osiągnięcia (Grywalizacja)
-* **Statystyki obszaru:** Obliczanie realnej powierzchni odwiedzonej na podstawie rozdzielczości heksów (np. "Odwiedziłeś już 124 km² świata!").
-* **Podział na kraje:** Integracja z granicami państw/województw w formacie GeoJSON. Aplikacja mogłaby informować: "Odwiedziłeś 15% powierzchni Polski" lub "Odwiedziłeś 5 różnych państw".
-* **Wizualna oś czasu (Time Slider):** Suwak na dole ekranu, który pozwala cofnąć się w czasie i animować, jak z miesiąca na miesiąc przybywało odwiedzonych heksów.
+### 📍 GPS Location and Place Search
+* **"My Location" button:** Utilize the browser's system Geolocation API to instantly center the map on the user's position and optionally mark the current hex.
+* **Geocoder (Search):** Integrate with a free API (e.g., Nominatim/OpenStreetMap) to allow searching for cities or countries and quickly centering the view.
 
-### 🗺️ Lepsze Podkłady Mapowe (Map Tiles)
-* **Wybór mapy:** Dodanie przełącznika podkładów mapowych:
-  * Widok satelitarny (np. Esri World Imagery) – genialny do weryfikacji leśnych i dzikich terenów.
-  * Mapa fizyczna/topograficzna (np. OpenTopoMap) – idealna w góry.
-  * Prosta, minimalistyczna mapa wektorowa.
+### 👥 Advanced User Profiles
+* **Profile Management:** Add options to edit usernames and delete profiles directly from the user interface (UI).
+* **Custom Color Palettes:** Ability to assign a unique color to each user (instead of a static emerald green), allowing maps of multiple people to be overlaid and compared (e.g., "Where have we been together?").
 
-### ⚡ Optymalizacja Renderowania przy Dużej Skali
-* **Płynność działania:** Przy tysiącach zaznaczonych heksów standardowy Canvas Leaflet może zacząć spowalniać.
-  * Rozwiązanie: Przejście na renderowanie z użyciem **Leaflet.VectorGrid** lub integracja z biblioteką **MapLibre GL** (WebGL), która bez problemu renderuje setki tysięcy obiektów.
-* **Inteligentne pobieranie (Bounding Box):** Zamiast pobierać z bazy wszystkie heksy na raz podczas ładowania strony, API mogłoby zwracać tylko te heksy, które znajdują się w aktualnym oknie widoku mapy (`map.getBounds()`).
+### ✍️ Interactive Memories (Notes and Photos)
+* **Hex Details:** Clicking on a visited hex opens a popup or modal where the user can:
+  * Add a precise date (or date range) of the visit.
+  * Enter a short travel note/journal entry.
+  * Add photos (saved on the server or as links).
+* **Travel Gallery:** A summary view of all added photos from the map in a beautiful grid layout.
 
----
-
-## 3. PWA i Działanie Offline (Offline-First)
-
-### 💾 Zapisywanie Map w Pamięci Podręcznej
-* **Pobieranie kafelków offline:** Możliwość zaznaczenia obszaru na mapie (np. "Bieszczady") i pobrania wszystkich kafelków mapy dla tego regionu do pamięci telefonu (przy użyciu IndexedDB). Dzięki temu mapa będzie działać w głębokim lesie lub górach całkowicie bez zasięgu.
-
-### 🔄 Kolejka Synchronizacji (Offline Queue)
-* **Zapis bez sieci:** Użytkownik podróżuje i klika heksy w trybie offline. Aplikacja zapisuje te akcje w lokalnej bazie `IndexedDB` w przeglądarce. Gdy telefon odzyska połączenie internetowe, Service Worker w tle (Background Sync API) wysyła zgromadzone dane do bazy SQLite na serwerze.
+### 📥 Import / Export Data (GPS Tracks)
+* **Import GPX / GeoJSON files:** A top feature for active travelers. The user uploads a `.gpx` file from their watch (Garmin, Strava) or phone, and the app automatically calculates which hexes were intersected by the route and marks them as visited.
+* **Backup:** Export all user data to a JSON/CSV file for easy import on another device.
 
 ---
 
-## 4. Backend i Bezpieczeństwo
+## 2. H3 & Map Engine (Visualization and Optimizations)
 
-### 🔐 Logowanie i Uwierzytelnianie
-* **Autentykacja użytkowników:** Obecnie każdy może przełączyć się na dowolnego użytkownika w menu rozwijanym. Wprowadzenie prostego systemu logowania (hasło / token sesji) lub logowania przez Google/GitHub zapewni prywatność map.
-* **Publiczne udostępnianie map:** Opcja generowania unikalnego linku (np. `api.php?share=token`), który pozwala innym osobom wyświetlić mapę danego podróżnika w trybie "tylko do odczytu".
+### 📈 Stats and Achievements (Gamification)
+* **Area Statistics:** Calculate the real area visited based on hex resolutions (e.g., "You have visited 124 km² of the world!").
+* **Country Breakdown:** Integrate with country/province borders in GeoJSON format. The app could notify: "You have visited 15% of Poland" or "You have visited 5 different countries."
+* **Visual Timeline (Time Slider):** A slider at the bottom of the screen to go back in time and animate the progress of visited hexes month by month.
 
-### 📊 Integracja z zewnętrznymi API turystycznymi
-* **Informacje o regionie:** Kliknięcie w heks pobiera ciekawostki turystyczne lub pogodę z zewnętrznych API (np. Wikipedia API, OpenWeatherMap) i wyświetla je w panelu bocznym.
+### 🗺️ Better Map Tiles
+* **Map Selection:** Add a map layer switcher:
+  * Satellite view (e.g., Esri World Imagery) – great for verifying forests and wild terrains.
+  * Physical/topographical map (e.g., OpenTopoMap) – ideal for mountains.
+  * A simple, minimalist vector map.
+
+### ⚡ Rendering Optimization at Scale
+* **Performance:** With thousands of marked hexes, Leaflet's standard Canvas might begin to slow down.
+  * Solution: Switch to rendering using **Leaflet.VectorGrid** or integrate with the **MapLibre GL** library (WebGL), which easily renders hundreds of thousands of objects.
+* **Smart Fetching (Bounding Box):** Instead of loading all hexes from the database at once on page load, the API could return only the hexes within the current map viewport bounds (`map.getBounds()`).
 
 ---
 
-## Sugerowane pierwsze kroki (Quick Wins)
-Jeśli chcesz zacząć rozwijać projekt od zaraz, najszybsze i najbardziej efektowne wdrożenia to:
-1. **Lokalizacja GPS:** Dodanie przycisku geolokalizacji zajmuje kilkanaście linii kodu w JS, a diametralnie poprawia wygodę na telefonach.
-2. **Przycisk usuwania/edycji użytkowników:** Uporządkowanie podstawowego zarządzania profilami.
-3. **Wybór mapy satelitarnej:** Wystarczy dodać nowy URL kafelków w `js/map.js` i dodać prosty przełącznik w UI.
+## 3. PWA and Offline Capability (Offline-First)
+
+### 💾 Caching Map Areas
+* **Download tiles offline:** Ability to select an area on the map (e.g., "Bieszczady Mountains") and download all map tiles for this region to the phone's storage (using IndexedDB). This ensures the map works in deep forests or mountains completely without cellular coverage.
+
+### 🔄 Offline Sync Queue
+* **No Network Saving:** Users travel and click hexes offline. The app stores these actions in the browser's local `IndexedDB`. Once the phone regains internet connection, a background Service Worker (Background Sync API) sends the queued data to the server's SQLite database.
+
+---
+
+## 4. Backend and Security
+
+### 🔐 Login and Authentication
+* **User Authentication:** Currently, anyone can switch to any user via the dropdown menu. Introducing a simple login system (password / session token) or login via Google/GitHub will ensure map privacy.
+* **Public Map Sharing:** An option to generate a unique link (e.g., `api.php?share=token`) that allows others to view a specific traveler's map in "read-only" mode.
+
+### 📊 Integration with External Travel APIs
+* **Region Information:** Clicking a hex fetches local tourism facts or weather from external APIs (e.g., Wikipedia API, OpenWeatherMap) and displays them in the side panel.
+
+---
+
+## Suggested Next Steps (Quick Wins)
+If you want to start developing the project right away, the fastest and most impactful implementations are:
+1. **GPS Location:** Adding a geolocation button takes just a dozen lines of JS code and drastically improves convenience on mobile phones.
+2. **User Delete/Edit Button:** Cleaning up basic profile management.
+3. **Satellite Map Selection:** Simply add a new tile URL in `js/map.js` and add a basic toggle in the UI.
