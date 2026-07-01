@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hextravel-v15';
+const CACHE_NAME = 'hextravel-v17';
 const ASSETS_TO_CACHE = [
   './',
   './index.php',
