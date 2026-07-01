@@ -70,11 +70,14 @@ export function getColorsForLevel(level) {
 
 // Update UI stats
 export function updateStats() {
-    ELEMENTS.hexCountEl.innerText = state.visited.size;
+    const count = state.visited.size;
+    if (ELEMENTS.hexCountEl) ELEMENTS.hexCountEl.innerText = count;
+    if (ELEMENTS.mobileHexCountVal) ELEMENTS.mobileHexCountVal.innerText = count;
+    
     const zoom = map.getZoom();
     const res = getResForZoom(zoom);
-    ELEMENTS.zoomLevelEl.innerText = zoom;
-    ELEMENTS.hexAreaEl.innerText = `${res} (${getAreaForRes(res)})`;
+    if (ELEMENTS.zoomLevelEl) ELEMENTS.zoomLevelEl.innerText = zoom;
+    if (ELEMENTS.hexAreaEl) ELEMENTS.hexAreaEl.innerText = `${res} (${getAreaForRes(res)})`;
 }
 
 // Aggregate and Render visited hexes based on zoom LOD

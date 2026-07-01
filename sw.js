@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hextravel-v5';
+const CACHE_NAME = 'hextravel-v11';
 const ASSETS_TO_CACHE = [
   './',
   './index.php',
@@ -19,6 +19,7 @@ const ASSETS_TO_CACHE = [
 
 // Install Event
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('Pre-caching assets');
@@ -34,7 +35,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 

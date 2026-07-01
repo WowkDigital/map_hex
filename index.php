@@ -61,11 +61,11 @@ if (!$isLoggedIn):
             <input type="hidden" name="login_action" value="1">
             <div class="input-group">
                 <label class="control-label" for="username">Username</label>
-                <input type="text" id="username" name="username" required autocomplete="username" placeholder="kw314">
+                <input type="text" id="username" name="username" required autocomplete="username" placeholder="">
             </div>
             <div class="input-group">
                 <label class="control-label" for="password">Password</label>
-                <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+                <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="">
             </div>
             <button type="submit" class="login-btn">Log In</button>
         </form>
@@ -95,6 +95,9 @@ if (!$isLoggedIn):
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
     
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#10b981">
@@ -102,100 +105,181 @@ if (!$isLoggedIn):
 </head>
 <body>
 
-    <!-- UI Overlay Toggle (Visible when hidden) -->
-    <button id="show-ui-btn" class="toggle-ui-btn" title="Show Panel">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"></path></svg>
+    <!-- Show UI Toggle Button (when top-nav is hidden) -->
+    <button id="show-ui-btn" class="toggle-ui-btn" title="Show Controls">
+        <i data-lucide="eye"></i>
     </button>
 
-    <!-- UI Overlay -->
-    <div class="ui-overlay" id="ui-panel">
-        <button id="hide-ui-btn" class="close-panel-btn" title="Hide Panel">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-        </button>
+    <!-- Top Navigation Bar -->
+    <header class="top-nav-bar" id="ui-panel">
+        <div class="nav-left">
+            <!-- Stats -->
+            <div class="stats-group">
+                <div class="stat-pill" title="Hexes Visited">
+                    <i data-lucide="hexagon" class="stat-icon icon-emerald"></i>
+                    <span id="hex-count" class="stat-value">0</span>
+                </div>
+                <div class="stat-pill zoom-stat" title="Current Zoom">
+                    <i data-lucide="zoom-in" class="stat-icon"></i>
+                    <span id="zoom-level" class="stat-value">-</span>
+                </div>
+                <div class="stat-pill area-stat" title="Hex Area / Resolution">
+                    <i data-lucide="scale" class="stat-icon"></i>
+                    <span id="hex-area" class="stat-value">-</span>
+                </div>
+            </div>
+        </div>
+
         <div class="brand">
-            <div class="brand-icon">H</div>
-            <h1>HexTravel Log</h1>
-        </div>
-        <p class="description">
-            Click anywhere on the map to mark the hexagonal region as visited. Zoom in for higher precision.
-        </p>
-        
-        <!-- User Controls -->
-        <div class="user-controls">
-            <select id="user-select" class="user-select">
-                <option value="" disabled selected>Loading users...</option>
-            </select>
-            <button id="add-user-btn" class="add-user-btn" title="Add New User">+</button>
-            <a href="?logout=1" class="logout-btn" title="Log Out">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            </a>
+            <i data-lucide="map" class="brand-icon"></i>
+            <span class="brand-name">HexTravel Log</span>
         </div>
 
-        <div class="stats-card">
-            <div class="stat-item">
-                <span class="stat-label">Hexes Visited</span>
-                <span id="hex-count" class="stat-value">0</span>
+        <!-- Mobile stats and settings toggles -->
+        <div class="mobile-actions">
+            <div class="stat-pill mobile-hex-count" title="Hexes Visited">
+                <i data-lucide="hexagon" class="stat-icon icon-emerald"></i>
+                <span id="mobile-hex-count-val">0</span>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-label">Current Zoom</span>
-                <span id="zoom-level" class="stat-value">-</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Hex Area</span>
-                <span id="hex-area" class="stat-value">-</span>
-            </div>
+            <button id="mobile-settings-btn" class="control-btn" title="Toggle Settings">
+                <i data-lucide="settings"></i>
+            </button>
         </div>
 
-        <!-- Controls -->
-        <div class="controls-section">
-            <div class="control-group">
-                <div class="control-header">
-                    <span class="control-label">Dark Mode</span>
-                    <label class="switch">
-                        <input type="checkbox" id="dark-mode-toggle">
-                        <span class="slider"></span>
-                    </label>
+        <div class="nav-right" id="secondary-controls">
+            <!-- Map Toggles -->
+            <div class="controls-group">
+                <!-- Paint Mode -->
+                <label class="icon-toggle-btn" title="Paint Mode (Hold to paint)">
+                    <input type="checkbox" id="paint-mode-toggle">
+                    <div class="toggle-icon-box">
+                        <i data-lucide="brush"></i>
+                    </div>
+                </label>
+
+                <!-- Eraser Mode -->
+                <label class="icon-toggle-btn" title="Eraser Mode">
+                    <input type="checkbox" id="eraser-mode-toggle">
+                    <div class="toggle-icon-box eraser-icon-box">
+                        <i data-lucide="eraser"></i>
+                    </div>
+                </label>
+
+                <!-- Knowledge Levels -->
+                <div class="level-picker" title="Knowledge Level">
+                    <button class="level-btn level-1" data-level="1" title="Low Knowledge">
+                        <i data-lucide="hexagon" class="lvl-icon"></i>
+                    </button>
+                    <button class="level-btn level-2 active" data-level="2" title="Mid Knowledge">
+                        <i data-lucide="hexagon" class="lvl-icon"></i>
+                    </button>
+                    <button class="level-btn level-3" data-level="3" title="High Knowledge">
+                        <i data-lucide="hexagon" class="lvl-icon"></i>
+                    </button>
                 </div>
+
+                <!-- Opacity Control Dropdown -->
+                <div class="dropdown-wrapper">
+                    <button id="opacity-dropdown-btn" class="control-btn" title="Adjust Hex Opacity">
+                        <i data-lucide="sliders"></i>
+                    </button>
+                    <div class="dropdown-popover" id="opacity-dropdown">
+                        <div class="popover-header">
+                            <span>Hex Opacity</span>
+                            <span id="opacity-value">100%</span>
+                        </div>
+                        <input type="range" id="opacity-slider" min="0" max="100" value="100" class="custom-slider">
+                    </div>
+                </div>
+
+                <!-- Dark Mode -->
+                <label class="icon-toggle-btn theme-toggle" title="Toggle Theme">
+                    <input type="checkbox" id="dark-mode-toggle">
+                    <div class="toggle-icon-box">
+                        <i data-lucide="moon" class="theme-icon-dark"></i>
+                        <i data-lucide="sun" class="theme-icon-light"></i>
+                    </div>
+                </label>
             </div>
 
-            <div class="control-group">
-                <div class="control-header">
-                    <span class="control-label">Paint Mode</span>
-                    <label class="switch">
-                        <input type="checkbox" id="paint-mode-toggle">
-                        <span class="slider"></span>
-                    </label>
+
+
+            <!-- User Selector & Profile -->
+            <div class="user-group">
+                <div class="user-select-container">
+                    <i data-lucide="user" class="select-user-icon"></i>
+                    <select id="user-select" class="user-select">
+                        <option value="" disabled selected>Loading users...</option>
+                    </select>
                 </div>
-                <p class="description" style="margin: 0; font-size: 0.75rem;">Hold mouse to paint visited areas.</p>
+                
+                <button id="add-user-btn" class="control-btn add-user-btn-nav" title="Add New User">
+                    <i data-lucide="user-plus"></i>
+                </button>
+
+                <a href="?logout=1" class="logout-btn control-btn" title="Log Out">
+                    <i data-lucide="log-out"></i>
+                </a>
             </div>
 
-            <div class="control-group">
-                <span class="control-label">Knowledge Level</span>
-                <div class="level-picker">
-                    <button class="level-btn level-1" data-level="1">Low</button>
-                    <button class="level-btn level-2 active" data-level="2">Mid</button>
-                    <button class="level-btn level-3" data-level="3">High</button>
-                </div>
-            </div>
 
-            <div class="control-group">
-                <div class="control-header">
-                    <span class="control-label">Eraser Mode</span>
-                    <label class="switch">
-                        <input type="checkbox" id="eraser-mode-toggle">
-                        <span class="slider eraser"></span>
-                    </label>
-                </div>
-                <p class="description" style="margin: 0; font-size: 0.75rem;">Remove hexes while clicking or painting.</p>
-            </div>
 
-            <div class="control-group">
-                <div class="control-header">
-                    <span class="control-label">Hex Opacity</span>
-                    <span id="opacity-value" class="stat-value" style="font-size: 0.75rem;">100%</span>
+            <!-- Utility Buttons -->
+            <div class="utility-group">
+                <button id="info-btn" class="control-btn" title="Show Instructions">
+                    <i data-lucide="info"></i>
+                </button>
+                <button id="hide-ui-btn" class="control-btn hide-ui-btn-nav" title="Hide Navigation Bar">
+                    <i data-lucide="eye-off"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Info/Instructions Modal -->
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal-card">
+            <button class="modal-close-btn" id="close-info-btn" title="Close">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-brand">
+                <i data-lucide="map" class="modal-brand-icon"></i>
+                <h2>HexTravel Log Instructions</h2>
+            </div>
+            <div class="modal-body">
+                <p>Track and log your world travels on a clean, interactive hexagonal grid system based on Uber H3.</p>
+                <div class="instruction-list">
+                    <div class="instruction-item">
+                        <i data-lucide="mouse-pointer-click"></i>
+                        <div>
+                            <strong>Standard Mode:</strong> Click any hexagon on the map to mark it as visited, or click it again to remove it.
+                        </div>
+                    </div>
+                    <div class="instruction-item">
+                        <i data-lucide="brush"></i>
+                        <div>
+                            <strong>Paint Mode:</strong> Hold and drag with the left mouse button to paint multiple hexagons. Right-click and drag to move the map while painting.
+                        </div>
+                    </div>
+                    <div class="instruction-item">
+                        <i data-lucide="eraser"></i>
+                        <div>
+                            <strong>Eraser Mode:</strong> Toggle the eraser to remove hexagons by clicking or painting over them.
+                        </div>
+                    </div>
+                    <div class="instruction-item">
+                        <i data-lucide="zoom-in"></i>
+                        <div>
+                            <strong>Detail Level (LOD):</strong> Zooming in shows smaller hexagons for higher precision. Zooming out groups them into larger parent cells.
+                        </div>
+                    </div>
+                    <div class="instruction-item">
+                        <i data-lucide="hexagon"></i>
+                        <div>
+                            <strong>Knowledge Levels:</strong> Choose between Low, Mid, and High knowledge levels to represent how thoroughly you know a region. Each is colored with a different shade of green.
+                        </div>
+                    </div>
                 </div>
-                <input type="range" id="opacity-slider" min="0" max="100" value="100" class="custom-slider">
             </div>
         </div>
     </div>

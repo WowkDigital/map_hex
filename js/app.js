@@ -19,6 +19,9 @@ setMapTheme(state.theme);
 if (state.theme === 'dark') {
     ELEMENTS.darkModeToggle.checked = true;
 }
+if (window.lucide) {
+    lucide.createIcons();
+}
 
 state.visitedLayer.addTo(map);
 state.gridLayer.addTo(map);
@@ -222,6 +225,40 @@ ELEMENTS.userSelect.addEventListener('change', (e) => {
 });
 
 ELEMENTS.addUserBtn.addEventListener('click', createUser);
+
+// Opacity Popover Toggle
+ELEMENTS.opacityDropdownBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    ELEMENTS.opacityDropdown.classList.toggle('show');
+});
+
+// Close opacity dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    if (ELEMENTS.opacityDropdown && !ELEMENTS.opacityDropdown.contains(e.target) && e.target !== ELEMENTS.opacityDropdownBtn) {
+        ELEMENTS.opacityDropdown.classList.remove('show');
+    }
+});
+
+// Mobile settings drawer toggle
+ELEMENTS.mobileSettingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    ELEMENTS.secondaryControls.classList.toggle('show');
+});
+
+// Info Modal events
+ELEMENTS.infoBtn.addEventListener('click', () => {
+    ELEMENTS.infoModal.classList.add('show');
+});
+
+ELEMENTS.closeInfoBtn.addEventListener('click', () => {
+    ELEMENTS.infoModal.classList.remove('show');
+});
+
+ELEMENTS.infoModal.addEventListener('click', (e) => {
+    if (e.target === ELEMENTS.infoModal) {
+        ELEMENTS.infoModal.classList.remove('show');
+    }
+});
 
 // Panel Toggles
 ELEMENTS.hideUiBtn.addEventListener('click', () => {

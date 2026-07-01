@@ -16,7 +16,17 @@ export const ELEMENTS = {
     hexCountEl: document.getElementById('hex-count'),
     zoomLevelEl: document.getElementById('zoom-level'),
     hexAreaEl: document.getElementById('hex-area'),
-    toastContainer: document.getElementById('toast-container')
+    toastContainer: document.getElementById('toast-container'),
+    
+    // New Top Bar references
+    opacityDropdownBtn: document.getElementById('opacity-dropdown-btn'),
+    opacityDropdown: document.getElementById('opacity-dropdown'),
+    mobileSettingsBtn: document.getElementById('mobile-settings-btn'),
+    secondaryControls: document.getElementById('secondary-controls'),
+    infoBtn: document.getElementById('info-btn'),
+    infoModal: document.getElementById('info-modal'),
+    closeInfoBtn: document.getElementById('close-info-btn'),
+    mobileHexCountVal: document.getElementById('mobile-hex-count-val')
 };
 
 export function showToast(message) {
