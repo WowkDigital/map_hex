@@ -26,7 +26,14 @@ export const ELEMENTS = {
     infoBtn: document.getElementById('info-btn'),
     infoModal: document.getElementById('info-modal'),
     closeInfoBtn: document.getElementById('close-info-btn'),
-    mobileHexCountVal: document.getElementById('mobile-hex-count-val')
+    mobileHexCountVal: document.getElementById('mobile-hex-count-val'),
+    
+    // Timeline Panel Elements
+    timelineToggle: document.getElementById('timeline-mode-toggle'),
+    timelinePanel: document.getElementById('timeline-panel'),
+    timelineSlider: document.getElementById('timeline-slider'),
+    timelinePlayBtn: document.getElementById('timeline-play-btn'),
+    timelineDateVal: document.getElementById('timeline-date-val')
 };
 
 export function showToast(message) {

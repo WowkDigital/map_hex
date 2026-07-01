@@ -11,5 +11,7 @@ export const state = {
     activeToasts: [],
     theme: localStorage.getItem('theme') || 'light',
     tileLayer: null,
-    currentUser: null // { id, username }
+    currentUser: null, // { id, username }
+    timelineMode: false,
+    timelineValue: null
 };

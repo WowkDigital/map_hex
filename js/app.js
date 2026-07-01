@@ -406,6 +406,145 @@ map.on('zoomend', () => {
     debouncedUpdateGrid();
 });
 
+// --- Timeline Mode Logic & Playback ---
+let playbackInterval = null;
+
+function updateTimelineDateLabel(timestamp) {
+    if (!timestamp) {
+        ELEMENTS.timelineDateVal.innerText = "-";
+        return;
+    }
+    const date = new Date(timestamp);
+    ELEMENTS.timelineDateVal.innerText = date.toLocaleString();
+}
+
+function stopTimelinePlayback() {
+    if (playbackInterval) {
+        clearInterval(playbackInterval);
+        playbackInterval = null;
+        setPlayIcon(false);
+    }
+}
+
+function setPlayIcon(isPlaying) {
+    if (isPlaying) {
+        ELEMENTS.timelinePlayBtn.innerHTML = '<i data-lucide="pause"></i>';
+    } else {
+        ELEMENTS.timelinePlayBtn.innerHTML = '<i data-lucide="play"></i>';
+    }
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+function startTimelinePlayback() {
+    stopTimelinePlayback();
+    
+    const slider = ELEMENTS.timelineSlider;
+    const min = parseInt(slider.min);
+    const max = parseInt(slider.max);
+    let val = parseInt(slider.value);
+    
+    // If already at the end, start from the beginning
+    if (val >= max) {
+        val = min;
+        slider.value = min;
+        state.timelineValue = min;
+        updateTimelineDateLabel(min);
+        refreshVisitedLayer();
+    }
+    
+    setPlayIcon(true);
+    
+    // Step size: divide the timeline into 100 steps
+    const step = Math.max(1, Math.ceil((max - min) / 100));
+    
+    playbackInterval = setInterval(() => {
+        val += step;
+        if (val >= max) {
+            val = max;
+            slider.value = max;
+            state.timelineValue = max;
+            updateTimelineDateLabel(max);
+            refreshVisitedLayer();
+            stopTimelinePlayback();
+        } else {
+            slider.value = val;
+            state.timelineValue = val;
+            updateTimelineDateLabel(val);
+            refreshVisitedLayer();
+        }
+    }, 100);
+}
+
+ELEMENTS.timelineToggle.addEventListener('change', (e) => {
+    state.timelineMode = e.target.checked;
+    ELEMENTS.timelinePanel.classList.toggle('show', state.timelineMode);
+    
+    stopTimelinePlayback();
+    
+    if (state.timelineMode) {
+        // Find min and max timestamps of visited hexes
+        let timestamps = [];
+        for (const [_, data] of state.visited) {
+            if (data.addedAt) {
+                const ms = new Date(data.addedAt).getTime();
+                if (!isNaN(ms)) {
+                    timestamps.push(ms);
+                }
+            }
+        }
+        
+        if (timestamps.length === 0) {
+            ELEMENTS.timelineSlider.disabled = true;
+            ELEMENTS.timelinePlayBtn.disabled = true;
+            ELEMENTS.timelineDateVal.innerText = "No visited areas";
+            state.timelineValue = null;
+        } else {
+            timestamps.sort((a, b) => a - b);
+            const minVal = timestamps[0];
+            const maxVal = timestamps[timestamps.length - 1];
+            
+            ELEMENTS.timelineSlider.disabled = false;
+            ELEMENTS.timelinePlayBtn.disabled = false;
+            
+            // If they are the same (only one unique timestamp), pad the min
+            let start = minVal;
+            let end = maxVal;
+            if (start === end) {
+                start = start - 60000; // 1 minute ago
+            }
+            
+            ELEMENTS.timelineSlider.min = start;
+            ELEMENTS.timelineSlider.max = end;
+            ELEMENTS.timelineSlider.value = end;
+            state.timelineValue = end;
+            
+            updateTimelineDateLabel(end);
+        }
+    } else {
+        state.timelineValue = null;
+    }
+    
+    refreshVisitedLayer();
+});
+
+ELEMENTS.timelineSlider.addEventListener('input', (e) => {
+    stopTimelinePlayback();
+    const val = parseInt(e.target.value);
+    state.timelineValue = val;
+    updateTimelineDateLabel(val);
+    refreshVisitedLayer();
+});
+
+ELEMENTS.timelinePlayBtn.addEventListener('click', () => {
+    if (playbackInterval) {
+        stopTimelinePlayback();
+    } else {
+        startTimelinePlayback();
+    }
+});
+
 // --- Init ---
 loadUsers().then(() => {
     updateGrid();

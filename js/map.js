@@ -90,6 +90,13 @@ export function refreshVisitedLayer() {
 
     // Aggregate lower-level hexes into higher-level ones based on zoom
     for (const [h3Index, data] of state.visited) {
+        // If in timeline mode, filter by date
+        if (state.timelineMode && state.timelineValue) {
+            if (!data.addedAt || new Date(data.addedAt).getTime() > state.timelineValue) {
+                continue;
+            }
+        }
+
         let renderIndex = h3Index;
         const nativeRes = h3.getResolution(h3Index);
         

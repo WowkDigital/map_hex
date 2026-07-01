@@ -192,6 +192,14 @@ if (!$isLoggedIn):
                     </div>
                 </div>
 
+                <!-- Timeline Mode -->
+                <label class="icon-toggle-btn timeline-toggle" title="Timeline Mode">
+                    <input type="checkbox" id="timeline-mode-toggle">
+                    <div class="toggle-icon-box">
+                        <i data-lucide="history"></i>
+                    </div>
+                </label>
+
                 <!-- Dark Mode -->
                 <label class="icon-toggle-btn theme-toggle" title="Toggle Theme">
                     <input type="checkbox" id="dark-mode-toggle">
@@ -281,6 +289,20 @@ if (!$isLoggedIn):
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Timeline Panel -->
+    <div id="timeline-panel" class="timeline-panel">
+        <div class="timeline-header">
+            <span class="timeline-title">Timeline Playback</span>
+            <span id="timeline-date-val" class="timeline-date">-</span>
+        </div>
+        <div class="timeline-controls">
+            <button id="timeline-play-btn" class="timeline-btn" title="Play">
+                <i data-lucide="play"></i>
+            </button>
+            <input type="range" id="timeline-slider" class="timeline-slider" min="0" max="100" value="100">
         </div>
     </div>
 
