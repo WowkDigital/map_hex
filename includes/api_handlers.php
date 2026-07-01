@@ -56,14 +56,26 @@ function handleHexes($db, $method) {
         $res = (int)$input['res'];
         $userId = (int)$input['user_id'];
         $level = isset($input['knowledge_level']) ? (int)$input['knowledge_level'] : 2;
+        $addedAt = isset($input['added_at']) ? $input['added_at'] : null;
 
-        $stmt = $db->prepare("INSERT OR REPLACE INTO visited_hexes (h3_index, user_id, res, knowledge_level) VALUES (:h3_index, :user_id, :res, :level)");
-        $stmt->execute([
-            ':h3_index' => $h3Index,
-            ':user_id' => $userId,
-            ':res' => $res,
-            ':level' => $level
-        ]);
+        if ($addedAt) {
+            $stmt = $db->prepare("INSERT OR REPLACE INTO visited_hexes (h3_index, user_id, res, knowledge_level, added_at) VALUES (:h3_index, :user_id, :res, :level, :added_at)");
+            $stmt->execute([
+                ':h3_index' => $h3Index,
+                ':user_id' => $userId,
+                ':res' => $res,
+                ':level' => $level,
+                ':added_at' => $addedAt
+            ]);
+        } else {
+            $stmt = $db->prepare("INSERT OR REPLACE INTO visited_hexes (h3_index, user_id, res, knowledge_level) VALUES (:h3_index, :user_id, :res, :level)");
+            $stmt->execute([
+                ':h3_index' => $h3Index,
+                ':user_id' => $userId,
+                ':res' => $res,
+                ':level' => $level
+            ]);
+        }
 
         // Get added_at
         $stmt = $db->prepare("SELECT added_at FROM visited_hexes WHERE h3_index = :h3_index AND user_id = :user_id");

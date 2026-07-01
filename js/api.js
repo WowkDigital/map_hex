@@ -41,18 +41,22 @@ export async function fetchVisitedHexes(userId) {
     return await response.json();
 }
 
-export async function saveHex(userId, h3Index, res, level) {
+export async function saveHex(userId, h3Index, res, level, addedAt = null) {
+    const body = { 
+        h3_index: h3Index, 
+        res: res,
+        knowledge_level: level,
+        user_id: userId
+    };
+    if (addedAt) {
+        body.added_at = addedAt;
+    }
     const response = await fetch('api.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
-            h3_index: h3Index, 
-            res: res,
-            knowledge_level: level,
-            user_id: userId
-        })
+        body: JSON.stringify(body)
     });
     checkAuth(response);
     if (!response.ok) {

@@ -129,7 +129,37 @@ async function loadVisitedHexes() {
     }
 }
 
-async function saveHexAction(h3Index, res, level) {
+// Track recently deleted hexes to support 10s restore rule
+const recentlyDeleted = new Map(); // h3Index => { addedAt, deletedAt }
+
+function trackDeleted(h3Index, addedAt) {
+    if (!addedAt) return;
+    recentlyDeleted.set(h3Index, {
+        addedAt: addedAt,
+        deletedAt: Date.now()
+    });
+    // Clean up after 10 seconds
+    setTimeout(() => {
+        const item = recentlyDeleted.get(h3Index);
+        if (item && Date.now() - item.deletedAt >= 10000) {
+            recentlyDeleted.delete(h3Index);
+        }
+    }, 10000);
+}
+
+function getRecentlyDeleted(h3Index) {
+    const item = recentlyDeleted.get(h3Index);
+    if (item) {
+        if (Date.now() - item.deletedAt <= 10000) {
+            recentlyDeleted.delete(h3Index); // Consume the value
+            return item;
+        }
+        recentlyDeleted.delete(h3Index);
+    }
+    return null;
+}
+
+async function saveHexAction(h3Index, res, level, addedAt = null) {
     if (!state.currentUser) return;
 
     if (window.GUEST_MODE) {
@@ -140,7 +170,7 @@ async function saveHexAction(h3Index, res, level) {
     }
 
     try {
-        const result = await api.saveHex(state.currentUser.id, h3Index, res, level);
+        const result = await api.saveHex(state.currentUser.id, h3Index, res, level, addedAt);
         if (result.success) {
             // Update visual with real timestamp
             drawHex(h3Index, level, result.added_at);
@@ -182,6 +212,8 @@ function handleHexAction(lat, lng) {
 
         if (state.eraserMode) {
             if (state.visited.has(h3Index)) {
+                const existing = state.visited.get(h3Index);
+                trackDeleted(h3Index, existing.addedAt);
                 removeHex(h3Index);
                 deleteHexAction(h3Index);
             }
@@ -189,15 +221,18 @@ function handleHexAction(lat, lng) {
         }
 
         if (!state.visited.has(h3Index)) {
-            drawHex(h3Index, state.selectedLevel); // Optimistic
-            saveHexAction(h3Index, res, state.selectedLevel);
+            const recentlyDeletedInfo = getRecentlyDeleted(h3Index);
+            const addedAt = recentlyDeletedInfo ? recentlyDeletedInfo.addedAt : null;
+            drawHex(h3Index, state.selectedLevel, addedAt); // Optimistic
+            saveHexAction(h3Index, res, state.selectedLevel, addedAt);
         } else if (!state.isPainting) {
             // Click on existing hex with same level: toggle off
             // Click on existing hex with different level: update level
             const existing = state.visited.get(h3Index);
             if (existing.level !== state.selectedLevel) {
-                saveHexAction(h3Index, res, state.selectedLevel);
+                saveHexAction(h3Index, res, state.selectedLevel, existing.addedAt);
             } else {
+                trackDeleted(h3Index, existing.addedAt);
                 removeHex(h3Index);
                 deleteHexAction(h3Index);
             }
@@ -205,7 +240,7 @@ function handleHexAction(lat, lng) {
              // If painting and already exists but with different level, update
              const existing = state.visited.get(h3Index);
              if (existing.level !== state.selectedLevel) {
-                 saveHexAction(h3Index, res, state.selectedLevel);
+                 saveHexAction(h3Index, res, state.selectedLevel, existing.addedAt);
              }
         }
 
